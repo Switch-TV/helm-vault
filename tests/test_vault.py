@@ -29,7 +29,7 @@ else:
 
 def test_load_yaml():
 
-    data_test = ordereddict([('image', ordereddict([('repository', 'nextcloud'), ('tag', '15.0.2-apache'), ('pullPolicy', 'IfNotPresent')])), ('nameOverride', ''), ('fullnameOverride', ''), ('replicaCount', 1), ('ingress', ordereddict([('enabled', True), ('annotations', ordereddict())])), ('nextcloud', ordereddict([('host', 'nextcloud.corp.justin-tech.com'), ('username', 'admin'), ('password', 'changeme')])), ('internalDatabase', ordereddict([('enabled', True), ('name', 'nextcloud')])), ('externalDatabase', ordereddict([('enabled', False), ('host', None), ('user', 'VAULT:/secret/testdata/user'), ('password', 'VAULT:/secret/{environment}/testdata/password'), ('database', 'nextcloud')])), ('mariadb', ordereddict([('enabled', True), ('db', ordereddict([('name', 'nextcloud'), ('user', 'nextcloud'), ('password', 'changeme')])), ('persistence', ordereddict([('enabled', True), ('storageClass', 'nfs-client'), ('accessMode', 'ReadWriteOnce'), ('size', '8Gi')]))])), ('service', ordereddict([('type', 'ClusterIP'), ('port', 8080), ('loadBalancerIP', 'nil')])), ('persistence', ordereddict([('enabled', True), ('storageClass', 'nfs-client'), ('accessMode', 'ReadWriteOnce'), ('size', '8Gi')])), ('resources', ordereddict()), ('nodeSelector', ordereddict()), ('tolerations', []), ('affinity', ordereddict())])
+    data_test = ordereddict([('image', ordereddict([('repository', 'nextcloud'), ('tag', '15.0.2-apache'), ('pullPolicy', 'IfNotPresent')])), ('nameOverride', ''), ('fullnameOverride', ''), ('replicaCount', 1), ('ingress', ordereddict([('enabled', True), ('annotations', ordereddict())])), ('nextcloud', ordereddict([('host', 'nextcloud.corp.justin-tech.com'), ('username', 'admin'), ('password', 'changeme')])), ('internalDatabase', ordereddict([('enabled', True), ('name', 'nextcloud')])), ('externalDatabase', ordereddict([('enabled', False), ('host', None), ('user', 'VAULT:/secret/testdata/user'), ('password', 'VAULT:/secret/{environment}/testdata/password'), ('database', '$(VAULT:/secret/{environment}/testdata/database-prefix)nextcloud$(VAULT:/secret/{environment}/testdata/database-suffix)')])), ('mariadb', ordereddict([('enabled', True), ('db', ordereddict([('name', 'nextcloud'), ('user', 'nextcloud'), ('password', 'changeme')])), ('persistence', ordereddict([('enabled', True), ('storageClass', 'nfs-client'), ('accessMode', 'ReadWriteOnce'), ('size', '8Gi')]))])), ('service', ordereddict([('type', 'ClusterIP'), ('port', 8080), ('loadBalancerIP', 'nil')])), ('persistence', ordereddict([('enabled', True), ('storageClass', 'nfs-client'), ('accessMode', 'ReadWriteOnce'), ('size', '8Gi')])), ('resources', ordereddict()), ('nodeSelector', ordereddict()), ('tolerations', []), ('affinity', ordereddict())])
     yaml_file = "./tests/test.yaml"
     data = vault.load_yaml(yaml_file)
     print(data)
@@ -59,7 +59,7 @@ def filecheckfunc():
 
 def test_enc():
     os.environ["KVVERSION"] = "v2"
-    input_values = ["adfs1", "adfs2", "adfs3", "adfs4"]
+    input_values = ["adfs1", "adfs2", "adfs3", "adfs4", "adfs5", "adfs6"]
     output = []
 
     def mock_input(s):
@@ -74,12 +74,14 @@ def test_enc():
         'Input a value for nextcloud.password: ',
         'Input a value for externalDatabase.user: ',
         'Input a value for externalDatabase.password: ',
+        'Input a value for externalDatabase.database interpolated string /secret/testdata/database-prefix: ',
+        'Input a value for externalDatabase.database interpolated string /secret/testdata/database-suffix: ',
         'Input a value for mariadb.db.password: ',
     ]
 
 def test_enc_with_env():
     os.environ["KVVERSION"] = "v2"
-    input_values = ["adfs1", "adfs2", "adfs3", "adfs4"]
+    input_values = ["adfs1", "adfs2", "adfs3", "adfs4", "adfs5", "adfs6"]
     output = []
 
     def mock_input(s):
@@ -94,6 +96,8 @@ def test_enc_with_env():
         'Input a value for nextcloud.password: ',
         'Input a value for externalDatabase.user: ',
         'Input a value for externalDatabase.password: ',
+        'Input a value for externalDatabase.database interpolated string /secret/test/testdata/database-prefix: ',
+        'Input a value for externalDatabase.database interpolated string /secret/test/testdata/database-suffix: ',
         'Input a value for mariadb.db.password: ',
     ]
 

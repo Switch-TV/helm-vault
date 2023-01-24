@@ -10,6 +10,7 @@ import glob
 import sys
 import git
 import platform
+import re
 import subprocess
 check_call = subprocess.check_call
 
@@ -70,6 +71,7 @@ def parse_args(args):
     view.add_argument("-vp", "--vaultpath", type=str, help="The Vault Path (secret mount location in Vault). Default: \"secret/helm\"")
     view.add_argument("-kv", "--kvversion", choices=['v1', 'v2'], type=str, help="The KV Version (v1, v2) Default: \"v1\"")
     view.add_argument("-v", "--verbose", help="Verbose logs", const=True, nargs="?")
+    view.add_argument("-e", "--environment", type=str, help="Allows for secrets to be decoded on a per environment basis")
 
     # Edit Help
     edit = subparsers.add_parser("edit", help="Edit decrypted YAML file. DOES NOT CLEAN UP AUTOMATICALLY.")
@@ -188,6 +190,9 @@ class Envs:
         return value
 
 class Vault:
+
+    resolved_values = {}
+
     def __init__(self, args, envs):
         self.args = args
         self.envs = envs
@@ -248,12 +253,18 @@ class Vault:
 
     def vault_read(self, value, path, key, full_path=None):
         mount_point, _path = self.process_mount_point_and_path(full_path, path, key)
+        if full_path is not None:
+            if full_path in self.resolved_values.keys():
+                if self.args.verbose is True:
+                    print(
+                        f"Returning previously fetched value from : {self.envs.vault_addr}/v1/{mount_point}/data{_path}")
+                return self.resolved_values[full_path]
 
         # Read from Vault, using the correct Vault KV version
         try:
             if self.args.verbose is True:
                 print(f"Using KV Version: {self.kvversion}")
-                print(f"Attempting to write to url: {self.envs.vault_addr}/v1/{mount_point}/data{_path}")
+                print(f"Attempting to read from url: {self.envs.vault_addr}/v1/{mount_point}/data{_path}")
             if self.kvversion in ['v1', 'v2']:
                 if self.kvversion == "v1":
                     value = self.client.read(_path)
@@ -261,6 +272,8 @@ class Vault:
                 else:
                     value = self.client.secrets.kv.v2.read_secret_version(path=_path,mount_point=mount_point)
                     value = value.get("data", {}).get("data", {}).get("value")
+                if full_path is not None:
+                    self.resolved_values[full_path] = value
                 return value
             else:
                 print("Wrong KV Version specified, either v1 or v2")
@@ -268,6 +281,7 @@ class Vault:
             print(f"Vault not configured correctly, check VAULT_ADDR and VAULT_TOKEN env variables. {ex}")
         except Exception as ex:
             print(f"Error: {ex}")
+
 
 def load_yaml(yaml_file):
     # Load the YAML file
@@ -308,6 +322,8 @@ def value_from_path(secret_data, path):
             raise Exception(f"Missing secret value. Key {key} does not exist when retrieving value from path {path}")
     return val
 
+resolved_values = {}
+
 def dict_walker(pattern, data, args, envs, secret_data, path=None):
     # Walk through the loaded dicts looking for the values we want
     environment = f"/{envs.environment}" if envs.environment else ""
@@ -330,11 +346,40 @@ def dict_walker(pattern, data, args, envs, secret_data, path=None):
                         data[key] = input(f"Input a value for {path_to_property_syntax}.{key}: ")
                     vault = Vault(args, envs)
                     vault.vault_write(data[key], path, key, _full_path)
-                elif (action == "dec") or (action == "view") or (action == "edit") or (action == "install") or (action == "template") or (action == "upgrade") or (action == "lint") or (action == "diff"):
+                elif (action == "dec") or (action == "view") or (action == "edit") or (action == "install") or (
+                        action == "template") or (action == "upgrade") or (action == "lint") or (action == "diff"):
                     vault = Vault(args, envs)
                     vault = vault.vault_read(value, path, key, _full_path)
                     value = vault
                     data[key] = value
+            elif isinstance(value, str):
+                ## Support string interpolation
+                repattern = re.compile(r'(?<!\$)\$\((' + envs.secret_template + '\s*\S+?)\)')
+                vault = Vault(args, envs)
+                # Use a regular expression to extract all instances of the secret_template from the value
+                for m in re.finditer(repattern, value):
+                    # Parse the full path out of the captured value and insert the environment name
+                    _full_path = m.group(0)[len(envs.secret_template) + 2:-1] \
+                        .replace("{environment}", environment)\
+                        .replace("//", "/")
+                    # Encode the value
+                    if action == "enc":
+                        path_sans_env = path.replace(environment, '')
+                        if secret_data:
+                            # If the value exists in the supplied secret data, return it without fetching from vault
+                            data[key] = value_from_path(secret_data, f"{path_sans_env}/{key}")
+                        else:
+                            # Prompt for a value to encrypt
+                            path_to_property_syntax = path_sans_env.replace("/", ".")[1:]
+                            data[key] = input(f"Input a value for {path_to_property_syntax}.{key} interpolated string {_full_path}: ")
+                        vault = Vault(args, envs)
+                        vault.vault_write(data[key], path, key, _full_path)
+                    elif (action == "dec") or (action == "view") or (action == "edit") or (action == "install") or (
+                                    action == "template") or (action == "upgrade") or (action == "lint") or (
+                                         action == "diff"):
+                        vault_value = vault.vault_read(value, path, key, _full_path)
+                        value = value.replace(m.group(0), vault_value)
+                        data[key] = value
             for res in dict_walker(pattern, value, args, envs, secret_data, path=f"{path}/{key}"):
                 yield res
     elif isinstance(data, list):

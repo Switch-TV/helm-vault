@@ -406,7 +406,7 @@ The operation will delete all decrypted files in a directory:
 $ helm vault clean
 ```
 
-### vault path templating
+### Vault Path Templating
 
 It is possible to setup vault's path inside helm chart like this
 
@@ -422,6 +422,17 @@ vault secrets enable  -path=helm2 kv-v2
 
 To override default value of template path pattern use **SECRET_TEMPLATE** variable. By default this value is VAULT: . This is mean that all keys with values like VAULT:something will be stored inside vault.
 
+#### String Interpolation
+
+When using Vault Path Templating, it's possible to interpolate the vault values with other strings like this:
+
+```yaml
+key1: "keyValue=$(VAULT:helm1/test/key1)"
+key2: "secondKeyValue=$(VAULT:/helm2/test/key2)"
+combinedKeys: "key1=$(VAULT:helm1/test/key1), key2=$(VAULT:/helm2/test/key2)"
+```
+
+Encrypting values referenced in this manner is also supported if entered manually but **will not work with --secret-file**
 
 ### Wrapper Examples
 
