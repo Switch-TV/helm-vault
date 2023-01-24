@@ -1,13 +1,13 @@
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Just-Insane/helm-vault) 
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Switch-TV/helm-vault) 
 
-[![License](https://img.shields.io/github/license/Just-Insane/helm-vault.svg)](https://github.com/Just-Insane/helm-vault/blob/master/LICENSE)
-[![Current Release](https://img.shields.io/github/release/Just-Insane/helm-vault.svg)](https://github.com/Just-Insane/helm-vault/releases/latest)
-[![Production Ready](https://img.shields.io/badge/production-ready-green.svg)](https://github.com/Just-Insane/helm-vault/releases/latest)
-[![GitHub issues](https://img.shields.io/github/issues/Just-Insane/helm-vault.svg)](https://github.com/Just-Insane/helm-vault/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/Just-Insane/helm-vault.svg?style=flat-square)](https://github.com/Just-Insane/helm-vault/pulls)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/Just-Insane/helm-vault.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Just-Insane/helm-vault/alerts/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Just-Insane/helm-vault.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Just-Insane/helm-vault/context:python)
-[![CI](https://github.com/Just-Insane/helm-vault/actions/workflows/main.yml/badge.svg)](https://github.com/Just-Insane/helm-vault/actions/workflows/main.yml)
+[![License](https://img.shields.io/github/license/Switch-TV/helm-vault.svg)](https://github.com/Switch-TV/helm-vault/blob/master/LICENSE)
+[![Current Release](https://img.shields.io/github/release/Switch-TV/helm-vault.svg)](https://github.com/Switch-TV/helm-vault/releases/latest)
+[![Production Ready](https://img.shields.io/badge/production-ready-green.svg)](https://github.com/Switch-TV/helm-vault/releases/latest)
+[![GitHub issues](https://img.shields.io/github/issues/Switch-TV/helm-vault.svg)](https://github.com/Switch-TV/helm-vault/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/Switch-TV/helm-vault.svg?style=flat-square)](https://github.com/Switch-TV/helm-vault/pulls)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/Switch-TV/helm-vault.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Switch-TV/helm-vault/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Switch-TV/helm-vault.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Switch-TV/helm-vault/context:python)
+[![CI](https://github.com/Switch-TV/helm-vault/actions/workflows/main.yml/badge.svg)](https://github.com/Switch-TV/helm-vault/actions/workflows/main.yml)
 
 # Helm-Vault
 
@@ -83,7 +83,7 @@ Input a value for /nextcloud/password:
 
 Build Status:
 
-[![CI](https://github.com/Just-Insane/helm-vault/actions/workflows/main.yml/badge.svg)](https://github.com/Just-Insane/helm-vault/actions/workflows/main.yml)
+[![CI](https://github.com/Switch-TV/helm-vault/actions/workflows/main.yml/badge.svg)](https://github.com/Switch-TV/helm-vault/actions/workflows/main.yml)
 
 Helm-Vault is in a production state. It should work across platforms, and should be able to handle most YAML thrown at it.
 
@@ -116,7 +116,7 @@ To get started with Helm-Vault, follow these steps:
 
 ## Getting the Source
 
-This project is [hosted on GitHub](https://github.com/Just-Insane/helm-vault). You can clone this project directly using this command:
+This project is [hosted on GitHub](https://github.com/Switch-TV/helm-vault). You can clone this project directly using this command:
 
 ```
 git clone git@github.com:Justin-Tech/helm-vault.git
@@ -150,8 +150,8 @@ Both of these checks must pass before PRs will be merged.
 ### Using Helm plugin manager (> 2.3.x)
 
 ```
-pip3 install git+https://github.com/Just-Insane/helm-vault
-helm plugin install https://github.com/Just-Insane/helm-vault
+pip3 install git+https://github.com/Switch-TV/helm-vault
+helm plugin install https://github.com/Switch-TV/helm-vault
 ```
 
 ## Usage and Examples
@@ -518,7 +518,7 @@ helm plugin upgrade vault
 
 ## Versioning
 
-This project uses [Semantic Versioning](http://semver.org/). For a list of available versions, see the [repository tag list](https://github.com/Just-Insane/helm-vault/tags).
+This project uses [Semantic Versioning](http://semver.org/). For a list of available versions, see the [repository tag list](https://github.com/Switch-TV/helm-vault/tags).
 
 **[Back to top](#table-of-contents)**
 
@@ -549,7 +549,7 @@ This project is licensed under GPLv3 - see [LICENSE.md](LICENSE.md) file for det
 
 # Authors
 
-* **[Justin Gauthier](https://github.com/Just-Insane)**
+* **[Justin Gauthier](https://github.com/ThatsInsane)**
 
 **[Back to top](#table-of-contents)**
 
