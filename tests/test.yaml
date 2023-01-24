@@ -48,7 +48,7 @@ externalDatabase:
   password: VAULT:/secret/{environment}/testdata/password
 
   ## Database name
-  database: nextcloud
+  database: $(VAULT:/secret/{environment}/testdata/database-prefix)nextcloud$(VAULT:/secret/{environment}/testdata/database-suffix)
 
 ##
 ## MariaDB chart configuration
