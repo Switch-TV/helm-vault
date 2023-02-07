@@ -278,9 +278,10 @@ class Vault:
             else:
                 print("Wrong KV Version specified, either v1 or v2")
         except AttributeError as ex:
-            print(f"Vault not configured correctly, check VAULT_ADDR and VAULT_TOKEN env variables. {ex}")
+            print(f"Vault not configured correctly, check VAULT_ADDR and VAULT_TOKEN env variables.")
+            raise ex
         except Exception as ex:
-            print(f"Error: {ex}")
+            raise ex
 
 
 def load_yaml(yaml_file):
@@ -290,6 +291,7 @@ def load_yaml(yaml_file):
     with open(yaml_file) as filepath:
         data = yaml.load(filepath)
         return data
+
 
 def cleanup(args, envs):
     # Cleanup decrypted files
@@ -416,7 +418,7 @@ def main(argv=None):
 
     for path, key, value in dict_walker(envs.secret_delim, data, args, envs, secret_data):
         print("Done")
-    
+
     decode_file = '.'.join(filter(None, [yaml_file, envs.environment, 'dec']))
 
     if action == "dec":
